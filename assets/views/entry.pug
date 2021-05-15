@@ -1,0 +1,58 @@
+block content
+  div.model#entry-dialog(style="display:none;")
+    div(style="position:absolute; padding:10px; top:0px; bottom:0px; left:0px; right:0px; background-color:rgb(0, 0, 0); z-item:1; opacity:0.4")
+    div.modal-content(style="width:720px;")
+      div.modal-header
+        span.close#password-dialog-close(onclick="$(this).Close('#entry-dialog');") &times;
+        h2 Create/Update Password Entry
+      div.modal-body(style="background: padding-bottom:5px;")
+        div(style="width: 70%; display:inline-block; padding:10px; margin-top:10px;")
+          div(style="width: 100%; padding-left:30px; padding-right:30px; padding-bottom:10px; border: 1px solid rgba(0, 0, 0, 0.2); border-radius:0px; background:rgba(255,255,255,0.2);")
+            div(style="height:14px;")
+              .p
+            label.modal-label(style="margin-left:-15px;" for="title-entry" ) Entry Title
+            div(style="height:4px;")
+              .p
+            input.modal-entry#title-entry(mtype="text" name="title-entry" placeholder="Title..." required)
+            label.modal-label(style="margin-left:-15px; width:100%;" for="userid") User Identifier  
+            div(style="height:4px;")
+              .p
+            input.modal-entry#userid(style="width:345px;" name="userid" placeholder="Userid...")
+            .p
+            label.modal-label(style="margin-left:-15px; width:100%;" for="password-entry") Password/Passphrase  
+            div(style="height:4px;")
+              .p
+            input.modal-entry#password-entry(style="width:300px;" type="password" name="phrase" placeholder="Password..." required)
+          div(style="width: 100%; padding-left:30px; padding-right:30px; padding-bottom:10px; border: 1px solid rgba(0, 0, 0, 0.2); margin-top:20px; border-radius:0px; background:rgba(255,255,255,0.2);")
+            div(style="height:14px;")
+              .p
+            label.modal-label(style="margin-left:-15px; margin-top:10px;" for="date-entry") Expiry/Renew Date
+            div(style="height:4px;")
+              .p
+            input.modal-entry#date-entry(type="text" name="date" placeholder="Date..." style="width: 200px;")
+            .p
+            label.modal-label(style="margin-left:-15px;" for="email") Email
+            div(style="height:4px;")
+              .p
+            input.modal-entry#email-entry(name="email" placeholder="Email...")
+            .p            
+            label.modal-label(style="margin-left:-15px;" for="url") Web Address (URL)
+            div(style="height:4px;")
+              .p
+            input.modal-entry#url(name="url" placeholder="URL...")
+            .p
+            label.modal-label(style="margin-left:-15px;" for="note") Notes
+            div(style="height:4px;")
+              .p
+            textarea.modal-entry#note(name="note" placeholder="Note..." style="height:40px; resize: none;")
+        div(style="padding: 10px;")
+          button.modal-btn#update-entry Update  
+          button.modal-cancel-btn#cancel-entry(onclick="$(this).Close('#entry-dialog');") Cancel
+        
+        button.round-button#trash-entry(style="display:none; position:absolute; bottom:15px; right:10px")
+          img(src="assets/images/garbage.svg" style="padding-top:6px; width:16px; height:16px; top:0px; text-align:center; margin-left:-1px;" alt="Trash")
+
+      div#droparea(style="position:absolute; margin-top:-10px; margin-left:30px; margin-right:10px; width:80px; top:80px; right:0px; padding:20px; background:rgba(0, 0, 0, 0.03); height:80px; opacity:0.7; border: 2px solid rgba(0, 0, 0, 0.2)")
+        img#password-image(src="assets/images/picture.svg" style="width:100%; height:100%;" alt="Password Image")
+  input#entry-uuid(type='hidden')
+  input#entry-status(type='hidden' value='create')

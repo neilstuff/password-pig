@@ -1,0 +1,20 @@
+block content
+  div.model#change-dialog(style="display:none")
+    div.modal-blocker
+    div(style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;")
+      div.modal-content(style="margin-top:120px; width:540px;")
+        div.modal-header
+          span.close#changeClose(onclick="$(this).Close('#changeDialog');") &times;
+          h2 Change Password
+        div.modal-body(style="height:160px;")
+          div(style="width: 50%; display:inline-block; padding:20px;")
+            label.modal-label#change-label(for="title" style="margin-left:-20px; margin-top:10px;")  <b><i>Change</i></b> the Passphrase for the Safe
+            p.
+            input.modal-entry#new-password(style="width:300px;" type="password" name="phrase" placeholder="password..." required)
+            div(style="position:absolute; left:20px; bottom:60px;")
+            p#connection-change-message(style="color:red; font-size: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;") &nbsp;
+          div(style="position:absolute; bottom:0px; padding:10px;")
+              button.modal-btn#change-password Change  
+              button.modal-cancel-btn#cancelChange(onclick="$(this).Close('#change-dialog');") Cancel
+          div.form-image(style="position:absolute; margin-left:20px; margin-right:10px; top:60px; right:0px;")
+            img(src="assets/images/password.svg" style="display:block; width:60px; height:60px; vertical-align: middle; margin: auto;" alt="Password Image")

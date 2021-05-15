@@ -1,0 +1,50 @@
+extends layout
+
+block content
+  script(type="text/template" data-template="card").
+    <div class="card" id="card-<%=uuid%>" onclick="$(this).Password('<%=uuid%>');" ondblclick="$(this).Modify('<%=uuid%>');">
+      <img id="img-<%=uuid%>" src="<%=image%>"></img>
+      <label id="label-<%=uuid%>" value="<%=name%>"><%=name%></label>
+    </div>
+
+  div.main(style="width: 100%; height:100%; overflow:hidden;")
+    audio#oink.preload(src="assets/sounds/oink.wav")
+    
+    div#toolbar(style="-webkit-app-region: drag;")
+      div.layout
+        h1(style="height: 30px; padding-left:40px; vertical-align:center"). 
+          Password Pig
+        div(style="position: absolute; top:0px; right:80px; padding-left:10px;")
+          button.button#upload-file(class="fas fa-folder-open fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:20px;")
+          button.button#download-file(class="far fa-save fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:20px;")
+          button.button#add-entry(class="far fa-address-card fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:20px;")
+          button.button#menu(class="fas fa-bars fa-1x top-icon" style="-webkit-app-region: no-drag; margin-left:10px;")
+        div(style="position: absolute; top:-5px; right:-15px; padding-left:10px;")
+          button.button#window-minimize(class="fas fa-minus fa-1x top-icon" style="-webkit-app-region: no-drag; margin-left:12px; font-size:12px; width:18px; height:18px;")
+          button.button#window-maximize(class="far fa-square fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:12px; width:18px; height:18px;")
+          button.button#quit(class="fas fa-times fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:12px; width:18px; height:18px;")
+      div#dropdown.dropdown-content
+        a#load(href="") Load Safe
+        a#save(href="") Save Safe
+        a#change(href="") Change Password
+
+    div.container(style="position: absolute; top:36px; bottom:0px; left: 0px; right: 0px;")
+      div.main(style="position: relative; overflow: auto; height:100%; left: 0px; right: 0px;")
+        div.mainbox#mainbox
+ 
+    div.statusbar
+    
+    div#info-button(style="position:absolute; top:4px; left:5px; -webkit-app-region: no-drag;")
+      img#info-image(src="assets/images/pig.png" style="width:36px; height:36px;" alt="Password Pig")
+ 
+    include assets/views/connect.pug
+    include assets/views/entry.pug
+    include assets/views/change.pug
+    include assets/views/save.pug
+
+  script(src="node_modules/ejs/ejs.min.js")
+  script(src="node_modules/egoroof-blowfish/dist/blowfish.js")
+  script(src="assets/javascripts/util/fileutil.js")
+  script(src="assets/javascripts/datepickr.js")
+  script(src="node_modules/jquery/dist/jquery.min.js")
+  script(src="assets/javascripts/responder.js")

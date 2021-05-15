@@ -1,0 +1,28 @@
+block content
+  div.model#connect-dialog(style="display:inline-block")
+    div.modal-blocker
+    div(style="position:absolute; padding:120px; top:0px; bottom:0px; left:0px; right:0px;")
+      div.modal-content(style="margin-top:80px; width:540px;")
+        div.modal-header
+          span.close#login-connect-close &times;
+          h2 Upload Safe
+        div.modal-body(style="background: white; height:200px;")
+          div(style="width: 50%; display:inline-block; padding:20px;")
+            label.modal-label#file-label(for="title" style="margin-left:-20px; margin-top:10px;") <b><i>Select</i></b> the Safe
+            div(style="display:flex; flex-direction:row;width:360px;")
+              input.modal-entry.file-entry#file-entry(style="width:272px; height:20px; border:solid 1px rgba(0,0,0, 0.4)" name="file" placeholder="file... ")
+              button#select-file(style="width:32px; height:24px; margin-top:6px") ...
+            label.modal-label#connect-label(for="title" style="margin-left:-20px; margin-top:10px;") <b><i>Enter</i></b> the Passphrase for the Safe
+            input.modal-entry#unlock-password(style="width:256px;" type="password" name="phrase" placeholder="password..." required)
+          div#connect-error(style="position:absolute; right:20px; bottom:75px;")
+            label.modal-label#connection-message(style="color:red;")
+          div(style="position:absolute; bottom:0px; padding:10px;")
+              button.modal-btn#unlock-safe Unlock  
+              button.modal-cancel-btn#cancel-safe Cancel
+          div.form-image(style="position:absolute; margin-left:20px; margin-right:10px; width:60px; height:60px; top:50px; right:0px; padding:20px; nopacity:0.7;")
+            img(src="assets/images/upload.svg" style="width:100%; height:100%;" alt="Password Image")
+
+          button.round-button#connect-clean(style="position:absolute; bottom:15px; right:10px")
+              img(src="assets/images/clean.svg" style="padding-top:6px; width:16px; height:16px; top:10px; text-align:center; margin-left:-1px;" alt="Information")
+
+  input#safe-status(type='hidden' value='create')
