@@ -592,7 +592,7 @@ $("#quit").on('click', async(e) => {
 
 });
 
-$(document).ready(() => {
+$(() => {
 
     $('#unlock-password').hideShowPassword(false, true);
     oink = createAudio('oink');
