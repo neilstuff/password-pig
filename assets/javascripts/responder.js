@@ -547,6 +547,9 @@ $("#quit").on('click', async(e) => {
 
 $(() => {
 
+    document.addEventListener('dragover', event => event.preventDefault());
+    document.addEventListener('drop', event => event.preventDefault());
+    
     $('#unlock-password').hideShowPassword(false, true);
     oink = createAudio('oink');
 
