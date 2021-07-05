@@ -8,12 +8,15 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs');
 const pug = require('pug');
+const os = require('os');
 
-const app = electron.app
-const protocol = electron.protocol;
-const nativeImage = electron.nativeImage;
-
-const locals = {};
+const { app } = electron;
+const { protocol } = electron;
+const { ipcMain } = electron;
+const { dialog } = electron;
+const { session } = electron;
+const { shell } = electron;
+const { webContents } = electron;
 
 var mainWindow = null;
 var db = null;
@@ -31,7 +34,10 @@ function createWindow() {
         autoHideMenuBar: true,
 
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: false,
+            contextIsolation: true,
+            enableRemoteModule: false,
+            preload: path.join(__dirname, "preload.js")
         }
 
     });
@@ -62,10 +68,8 @@ app.on('ready', function() {
 
     protocol.registerBufferProtocol('pug', function(request, callback) {
         let parsedUrl = require('url').parse(request.url);
-        var url = path.normalize(request.url.replace('pug:///', ''));
+        var url = path.normalize(request.url.replace(os.type() == 'Windows_NT' ? 'pug:///' : 'pug://', ''));
         let ext = path.extname(url);
-
-        console.log(url);
 
         switch (ext) {
             case '.pug':
@@ -100,5 +104,169 @@ app.on('activate', () => {
     if (mainWindow === null) {
         createWindow();
     }
+
+});
+
+ipcMain.on('quit', function(event, arg) {
+
+    app.quit();
+
+});
+
+ipcMain.on('minimize', function(event, arg) {
+
+    mainWindow.minimize();
+
+
+});
+
+ipcMain.on('isMaximized', function(event, arg) {
+
+    event.returnValue = mainWindow.isMaximized();
+
+});
+
+ipcMain.on('maximize', function(event, arg) {
+
+    mainWindow.maximize();
+
+});
+
+ipcMain.on('unmaximize', function(event, arg) {
+
+    mainWindow.unmaximize();
+
+});
+
+ipcMain.on('showPrintDialog', async function(event, arg) {
+    var result = await dialog.showSaveDialog({
+            properties: [
+                { createDirectory: true }
+            ],
+            filters: [
+                { name: 'pdf', extensions: ['pdf'] },
+                { name: 'All Files', extensions: ['*'] }
+            ]
+        }
+
+    );
+
+    event.returnValue = result;
+
+});
+
+ipcMain.on('printToPdf', function(event, arg) {
+    var filePath = arg;
+
+    let win = BrowserWindow.getFocusedWindow();
+
+    //Use default printing options
+    win.webContents.printToPDF({}).then(data => {
+
+        fs.writeFile(filePath, data, function(error) {
+            event.sender.send('wrote-pdf', filePath)
+        })
+
+    })
+
+});
+
+ipcMain.on('showOpenDialog', async function(event) {
+    var result = await dialog.showOpenDialog(os.type() == 'Windows_NT' ? {
+            properties: [ 'openDirectory', 'createDirectory'],
+            filters: [
+                { name: 'zip', extensions: ['zip'] },
+                { name: 'All Files', extensions: ['*'] }
+            ]
+        } : {
+            properties: [ 'openFile', 'openDirectory', 'createDirectory'],
+            filters: [
+                { name: 'zip', extensions: ['pig'] },
+                { name: 'All Files', extensions: ['*'] }
+            ]
+        }  
+
+    );
+
+    event.returnValue = result;
+
+});
+
+ipcMain.on('showSaveDialog', async function(event, arg) {
+    var filename = arg;
+
+    var result = await dialog.showSaveDialog({
+            defaultPath: filename,
+            properties: [
+                { createDirectory: true }
+            ],
+            filters: [
+                { name: 'zip', extensions: ['pig'] },
+                { name: 'All Files', extensions: ['*'] }
+            ]
+        }
+
+    );
+
+    event.returnValue = result;
+
+});
+
+ipcMain.on('openUrl', function(event, arg) {
+    var url = arg;
+
+    shell.openExternal(url);
+
+});
+
+ipcMain.on('getCookie', async function(event, name) {
+    function getCookie(name) {
+
+        return new Promise(accept => {
+            
+            session.defaultSession.cookies.get({
+                url: 'http://pig',
+                name: name
+            })
+            .then((cookies) => {
+               accept(cookies);
+            }).catch((error) => {
+                console.log(error);
+                accept(null);
+            });
+
+        });
+
+    }
+
+    event.returnValue = await getCookie(name);
+    
+});
+
+
+ipcMain.on('setCookie', async function(event, name, value) {
+
+    function setCookie(name, value) {
+
+        return new Promise(accept => {
+            var maxDate = new Date(8640000000000000);
+
+            session.defaultSession.cookies.set({
+                url: 'http://pig',
+                name: name,
+                value: value,
+                expirationDate: maxDate.getTime()         
+            })  .then(() => {
+                accept("OK");
+              }, (error) => {
+                console.error(error);
+                accept(error);
+              });     
+
+        });
+
+    }
+
+    event.returnValue = await setCookie(name, value);
 
 });

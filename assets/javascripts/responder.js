@@ -1,28 +1,13 @@
-const ipcRenderer = require('electron').ipcRenderer
-const app = require('electron').remote.app;
-const session = require('electron').remote.session;
-const remote = require('electron').remote;
-const { dialog } = require('electron').remote;
-
-const fs = require('fs');
-const $ = require('jquery');
-var Zip = require('jszip');
-
-require('electron-disable-file-drop');
-require('hideshowpassword');
-
-const { v1: uuidv1 } = require('uuid');
-const blowfish = require('egoroof-blowfish');
-const b64 = require('base64-js');
 
 let cardTemplate = ejs.compile($('script[data-template="card"]').text(), { client: true });
 
 datepickr(document.getElementById('date-entry'));
+
 document.addEventListener('dragover', event => event.preventDefault());
 document.addEventListener('drop', event => event.preventDefault());
 
 let passwords = {};
-let secret = uuidv1();
+let secret = window.api.uuidv1();
 let password = null;
 let file = null;
 let oink = null;
@@ -53,9 +38,9 @@ function toArrayBuffer(buf) {
 
  */
 function createAudio(src) {
-    var content = fs.readFileSync($(`#${src}`)[0].src.slice(7));
+    var content = window.api.fs().readFileSync(window.api.path($(`#${src}`)[0].src));
     var buffer = toArrayBuffer(content);
-    var blob = new Blob([buffer], { type: 'image/gif' });
+    var blob = new Blob([buffer], { type: 'audio/wav' });
 
     return new Audio(URL.createObjectURL(blob))
 
@@ -63,41 +48,26 @@ function createAudio(src) {
 
 /**
  * Set the Cookie
- * @param {string} name the cookie name
- * @param {string} data the cookie data
+ * @param {string} name the Cookie name
+ * @param {string} value the Cookie value
  */
-function setCookie(name, data) {
-    var maxDate = new Date(8640000000000000);
-
-    session.defaultSession.cookies.set({
-        url: 'http://pig',
-        name: name,
-        value: data,
-        expirationDate: maxDate.getTime()
-    }, function(error) {
-        console.log(error);
-    });
+function setCookie(name, value) {
+    
+    window.api.setCookie(name, value);
 
 }
 
 /**
  * Get the Cookie
  * @param {*} name the Cookie Name
- * @param {*} callback the COokie Callback
+ * @param {*} callback the Cookie Callback
  */
 function getCookie(name, callback) {
 
-    session.defaultSession.cookies.get({
-            url: 'http://pig',
-            name: name
-        })
-        .then((cookies) => {
-            callback(cookies);
-        }).catch((error) => {
-            console.log(error)
-        })
+    callback(window.api.getCookie(name));
 
 }
+
 $.fn.Serialize = (passwords) => {
 
     return new Promise(async(accept, reject) => {
@@ -154,11 +124,11 @@ $.fn.Save = async(password, secret, passwords, filename) => {
     return new Promise(async(accept) => {
         var entries = await $(this).Serialize(passwords);
 
-        const bf = new blowfish(password, blowfish.MODE.ECB, blowfish.PADDING.NULL);
+        const bf = new Blowfish(password, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
         const encoded = bf.encode(secret);
-        const b64Encoded = b64.fromByteArray(encoded);
+        const b64Encoded = base64js.fromByteArray(encoded);
 
-        var zip = new Zip();
+        var zip = new JSZip();
 
         zip.file(SECRET_FILE, b64Encoded);
 
@@ -182,9 +152,9 @@ $.fn.Modify = (uuid) => {
     $('#trash-entry').css('display', 'inline-block');
 
     let entry = passwords[uuid];
-    let b64Decoded = b64.toByteArray(entry.password);
-    let bf = new blowfish(secret, blowfish.MODE.ECB, blowfish.PADDING.NULL);
-    let safeSecret = bf.decode(b64Decoded, blowfish.TYPE.STRING);
+    let b64Decoded = base64js.toByteArray(entry.password);
+    let bf = new Blowfish(secret, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
+    let safeSecret = bf.decode(b64Decoded, Blowfish.TYPE.STRING);
 
     $('#entry-status').val('modify');
     $('#entry-uuid').val(uuid);
@@ -212,7 +182,7 @@ $.fn.Close = (id) => {
 
 $.fn.Quit = (id) => {
 
-    app.exit();
+    window.api.quit();
 
 }
 
@@ -222,14 +192,16 @@ $.fn.Quit = (id) => {
  */
 $.fn.Password = (uuid) => {
     var entry = passwords[uuid];
-    var b64Decoded = b64.toByteArray(entry.password);
-    var bf = new blowfish(secret, blowfish.MODE.ECB, blowfish.PADDING.NULL);
-    var password = bf.decode(b64Decoded, blowfish.TYPE.STRING);
+    var b64Decoded = base64js.toByteArray(entry.password);
+    var bf = new Blowfish(secret, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
+    var password = bf.decode(b64Decoded, Blowfish.TYPE.STRING);
 
     let temp = $("<input>");
 
     $("body").append(temp);
+
     temp.val(password).select();
+
     document.execCommand("copy");
     temp.remove();
 
@@ -276,13 +248,13 @@ $('#unlock-safe').on('click', async(e) => {
 
         return new Promise((accept, reject) => {
 
-            fs.readFile(filename, function(err, data) {
+            window.api.fs().readFile(filename, function(err, data) {
                 if (err) throw err;
 
                 var content = {};
                 var entries = {};
 
-                Zip.loadAsync(data).then(async function(zipFile) {
+                JSZip.loadAsync(data).then(async function(zipFile) {
                     var files = zipFile.file(/.*/);
                     var secret = "";
 
@@ -314,6 +286,7 @@ $('#unlock-safe').on('click', async(e) => {
     }
 
     try {
+
         $('#login-connect-close')[0].onclick = () => {
             $('#connect-dialog').css('display', 'none');
         }
@@ -337,10 +310,10 @@ $('#unlock-safe').on('click', async(e) => {
 
         let content = await processFile($('#file-entry').val());
 
-        let b64Decoded = b64.toByteArray(content.secret);
+        let b64Decoded = base64js.toByteArray(content.secret);
 
-        let bf = new blowfish(password, blowfish.MODE.ECB, blowfish.PADDING.NULL);
-        secret = bf.decode(b64Decoded, blowfish.TYPE.STRING);
+        let bf = new Blowfish(password, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
+        secret = bf.decode(b64Decoded, Blowfish.TYPE.STRING);
 
         if (!(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(secret))) {
             throw "Invalid Password";
@@ -370,11 +343,13 @@ $('#unlock-safe').on('click', async(e) => {
                 name: passwords[key].name,
                 image: passwords[key].image
             });
-
+           
+            console.log("after template"); 
+ 
             html = card + html;
 
         }
-
+     
         setCookie('filename', $('#file-entry').val());
 
         $('#mainbox').html(html);
@@ -412,16 +387,7 @@ $('#save').on('click', (e) => {
 });
 
 $("#select-file").on('click', async(e) => {
-    var result = await dialog.showOpenDialog({
-            properties: ['openFile'],
-            multiSelections: false,
-            filters: [
-                { name: 'Pig', extensions: ['pig'] },
-                { name: 'All Files', extensions: ['*'] }
-            ]
-        },
-
-    );
+    let result = window.api.showOpenDialog();
 
     if (!result.canceled) {
         $('#file-entry').val(result.filePaths[0]);
@@ -429,19 +395,8 @@ $("#select-file").on('click', async(e) => {
 
 });
 
-
 $("#save-select-file").on('click', async(e) => {
-    var result = await dialog.showSaveDialog({
-            properties: [
-                { createDirectory: true }
-            ],
-            filters: [
-                { name: 'Pig', extensions: ['pig'] },
-                { name: 'All Files', extensions: ['*'] }
-            ]
-        },
-
-    );
+    let result = window.api.showSaveDialog("untitled.pig");
 
     if (!result.canceled) {
         $('#save-file-entry').val(result.filePath);
@@ -480,9 +435,9 @@ $('#add-entry').on('click', (e) => {
 });
 
 $('#update-entry').on('click', (e) => {
-    var bf = new blowfish(secret, blowfish.MODE.ECB, blowfish.PADDING.NULL);
+    var bf = new Blowfish(secret, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
     var encoded = bf.encode($('#password-entry').val());
-    var b64Encoded = b64.fromByteArray(encoded);
+    var b64Encoded = base64js.fromByteArray(encoded);
 
     passwords[$('#entry-uuid').val()] = {
         name: $('#title-entry').val(),
@@ -564,31 +519,29 @@ $('#info-button').on('click', (e) => {
 });
 
 $("#window-minimize").on('click', async(e) => {
-    var window = remote.getCurrentWindow();
 
-    window.minimize();
+    window.api.minimize();
 
 });
 
-
 $("#window-maximize").on('click', async(e) => {
-    var window = remote.getCurrentWindow();
+    var isMaximized = window.api.isMaximized();
 
-    if (!window.isMaximized()) {
+    if (!isMaximized) {
         $("#window-maximize").addClass("fa-window-restore");
         $("#window-maximize").removeClass("fa-square");
-        window.maximize();
+        window.api.maximize();
     } else {
         $("#window-maximize").removeClass("fa-window-restore");
         $("#window-maximize").addClass("fa-square");
-        window.unmaximize();
+        window.api.unmaximize();
     }
 
 });
 
 $("#quit").on('click', async(e) => {
 
-    app.quit();
+    window.api.quit();
 
 });
 
