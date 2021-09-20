@@ -1,32 +1,33 @@
 {
     "name": "password-pig",
     "version": "1.0.0",
-    "description": "Password Pig",
+    "description": "Password Pig - the password manager",
     "main": "main.js",
-    "author": "thesourorange",
-    "license": "CC0-1.0",
     "scripts": {
         "pack": "electron-builder --dir",
-        "dist": "electron-builder",
+        "dist": "electron-builder --publish never",
         "start": "electron ."
     },
     "build": {
         "win": {
-            "target": [
-                {
-                    "target": "nsis",
-                    "arch": [
-                        "x64",
-                        "ia32"
-                    ]
-                }
-            ]
+            "target": [{
+                "target": "nsis",
+                "arch": [
+                    "x64",
+                    "ia32"
+                ]
+            }]
         }
     },
-    "repository": "https://github.com/electron/password-pig",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/thesourorange/neilstuff/password-pig.git"
+    },
     "keywords": [
         "Electron"
     ],
+    "author": "Neil Brittliff",
+    "license": "CC0-1.0",
     "dependencies": {
         "base64-js": "^1.3.1",
         "egoroof-blowfish": "^2.2.2",
@@ -42,7 +43,11 @@
     },
     "devDependencies": {
         "electron": "^14.0.1",
-        "electron-builder": "^22.5.1",
-        "node": "^16.9.1"
-    }
+        "electron-builder": "^22.11.7",
+        "node": "^15.8.0"
+    },
+    "bugs": {
+        "url": "https://github.com/thesourorange/neilstuff/password-pig/issues"
+    },
+    "homepage": "https://github.com/thesourorange/neilstuff/password-pig#readme"
 }
