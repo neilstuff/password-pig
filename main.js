@@ -17,12 +17,9 @@ const { dialog } = electron;
 const { session } = electron;
 const { shell } = electron;
 const { webContents } = electron;
+const { BrowserWindow } = electron;
 
 var mainWindow = null;
-var db = null;
-var fileName = null;
-
-const BrowserWindow = electron.BrowserWindow
 
 function createWindow() {
     var extend = config.mode == "debug" ? 500 : 0;
