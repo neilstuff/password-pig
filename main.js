@@ -192,7 +192,7 @@ ipcMain.on('showSaveDialog', async function(event, arg) {
                 { createDirectory: true }
             ],
             filters: [
-                { name: 'zip', extensions: ['pig'] },
+                { name: 'pig', extensions: ['pig'] },
                 { name: 'All Files', extensions: ['*'] }
             ]
         }
