@@ -7,7 +7,6 @@ const {
 
 const fs = require('fs');
 const os = require('os');
-const { v1: uuidv1 } = require('uuid');
 
 contextBridge.exposeInMainWorld(
     "api", {
@@ -51,9 +50,6 @@ contextBridge.exposeInMainWorld(
             ipcRenderer.on(message, (event, path) => {
                 callback()
             });
-        },
-        uuidv1: () => {
-            return uuidv1();
         },
         getCookie: (name) => {
             return ipcRenderer.sendSync('getCookie', name);

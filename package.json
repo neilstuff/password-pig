@@ -10,13 +10,15 @@
     },
     "build": {
         "win": {
-            "target": [{
-                "target": "nsis",
-                "arch": [
-                    "x64",
-                    "ia32"
-                ]
-            }]
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64",
+                        "ia32"
+                    ]
+                }
+            ]
         }
     },
     "repository": {
@@ -37,7 +39,6 @@
         "mime": "^2.0.4",
         "hideshowpassword": "^2.2.0",
         "jquery": "^3.5.1",
-        "uuid": "^8.0.0",
         "@fortawesome/fontawesome-free": "^5.13.0",
         "jszip": "^3.7.1"
     },

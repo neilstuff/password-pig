@@ -1,4 +1,3 @@
-
 let cardTemplate = ejs.compile($('script[data-template="card"]').text(), { client: true });
 
 datepickr(document.getElementById('date-entry'));
@@ -7,7 +6,7 @@ document.addEventListener('dragover', event => event.preventDefault());
 document.addEventListener('drop', event => event.preventDefault());
 
 let passwords = {};
-let secret = window.api.uuidv1();
+let secret = uuid();
 let password = null;
 let file = null;
 let oink = null;
@@ -65,6 +64,21 @@ function setCookie(name, value) {
 function getCookie(name, callback) {
 
     callback(window.api.getCookie(name));
+
+}
+
+/**
+ * Get a uuid v4 (Date/Random)
+ * @returns a v4 uuid
+ */
+function uuid() {
+    return  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var dt = new Date().getTime();
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
 
 }
 
@@ -136,13 +150,20 @@ $.fn.Save = async(password, secret, passwords, filename) => {
             zip.file(`${entry}.json`, JSON.stringify(entries[entry]));
         }
 
-        zip
-            .generateNodeStream({ type: 'nodebuffer', streamFiles: true })
-            .pipe(fs.createWriteStream(filename))
-            .on('finish', function() {
-                accept("OK");
-            });
+        zip.generateAsync({type:"blob"}).then(async function (blob) { 
+            var reader = new FileReader();
 
+            reader.onloadend = function() {
+                window.api.fs().writeFile(filename, new Uint8Array(reader.result), () => {
+                    setCookie('filename', filename);    
+                    accept("OK") 
+                });
+            }
+      
+            reader.readAsArrayBuffer(blob);
+
+        });   
+    
     });
 
 }
@@ -343,9 +364,7 @@ $('#unlock-safe').on('click', async(e) => {
                 name: passwords[key].name,
                 image: passwords[key].image
             });
-           
-            console.log("after template"); 
- 
+            
             html = card + html;
 
         }
@@ -360,7 +379,7 @@ $('#unlock-safe').on('click', async(e) => {
 
         window.setTimeout(() => {
             $('#connection-message').text("");
-        }, 1000);
+        }, 10000);
 
     }
 
@@ -419,7 +438,7 @@ $('#add-entry').on('click', (e) => {
     $('#trash-entry').css('display', 'none');
 
     $('#entry-status').val('create');
-    $('#entry-uuid').val(uuidv1());
+    $('#entry-uuid').val(uuid());
     $('#title-entry').val('');
     $('#date-entry').val('');
     $('#userid').val('');
