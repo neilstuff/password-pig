@@ -169,16 +169,10 @@ ipcMain.on('printToPdf', function(event, arg) {
 });
 
 ipcMain.on('showOpenDialog', async function(event) {
-    var result = await dialog.showOpenDialog(os.type() == 'Windows_NT' ? {
-            properties: [ 'openDirectory', 'createDirectory'],
+    var result = await dialog.showOpenDialog({
+            properties: [ 'openFile', 'createDirectory'],
             filters: [
-                { name: 'zip', extensions: ['zip'] },
-                { name: 'All Files', extensions: ['*'] }
-            ]
-        } : {
-            properties: [ 'openFile', 'openDirectory', 'createDirectory'],
-            filters: [
-                { name: 'zip', extensions: ['pig'] },
+                { name: 'pig', extensions: ['pig'] },
                 { name: 'All Files', extensions: ['*'] }
             ]
         }  
