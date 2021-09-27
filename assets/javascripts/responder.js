@@ -136,6 +136,7 @@ $.fn.Serialize = (passwords) => {
 $.fn.Save = async(password, secret, passwords, filename) => {
 
     return new Promise(async(accept) => {
+  
         var entries = await $(this).Serialize(passwords);
 
         const bf = new Blowfish(password, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
@@ -156,7 +157,7 @@ $.fn.Save = async(password, secret, passwords, filename) => {
             reader.onloadend = function() {
                 window.api.fs().writeFile(filename, new Uint8Array(reader.result), () => {
                     setCookie('filename', filename);    
-                    accept("OK") 
+                    accept("OK");
                 });
             }
       
@@ -307,6 +308,7 @@ $('#unlock-safe').on('click', async(e) => {
     }
 
     try {
+        $('#waiting').css('display', 'flex');
 
         $('#login-connect-close')[0].onclick = () => {
             $('#connect-dialog').css('display', 'none');
@@ -325,6 +327,7 @@ $('#unlock-safe').on('click', async(e) => {
         if ($('#file-entry').val() == "") {
             $('#mainbox').html("");
             $('#connect-dialog').css('display', 'none');
+            $('#waiting').css('display', 'none');
 
             return;
         }
@@ -337,7 +340,7 @@ $('#unlock-safe').on('click', async(e) => {
         secret = bf.decode(b64Decoded, Blowfish.TYPE.STRING);
 
         if (!(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(secret))) {
-            throw "Invalid Password";
+           throw "Invalid Password";
         }
 
         let names = [];
@@ -373,8 +376,10 @@ $('#unlock-safe').on('click', async(e) => {
 
         $('#mainbox').html(html);
         $('#connect-dialog').css('display', 'none');
+        $('#waiting').css('display', 'none');
 
     } catch (e) {
+        $('#waiting').css('display', 'none');
         $('#connection-message').text(e);
 
         window.setTimeout(() => {
@@ -424,12 +429,17 @@ $("#save-select-file").on('click', async(e) => {
 });
 
 $("#save-safe").on('click', async(e) => {
+    
+    $('#waiting').css('display', 'flex');
+
     var password = $('#save-password').val();
     var filename = $('#save-file-entry').val();
 
     await $.fn.Save(password, secret, passwords, filename);
 
     $(this).Close('#save-dialog');
+    $('#waiting').css('display', 'none');
+
 
 });
 

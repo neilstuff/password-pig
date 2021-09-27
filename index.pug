@@ -37,6 +37,9 @@ block content
     div#info-button(style="position:absolute; top:4px; left:5px; -webkit-app-region: no-drag;")
       img#info-image(src="assets/images/pig.png" style="width:36px; height:36px;" alt="Password Pig")
  
+    .modal-blocker#waiting(style="display:none;z-index:1000; justify-content: center;")
+       img(src="assets/images/animated-hour-glass.gif" style="width:80px; height:80px; margin-top:200px;")   
+
     include assets/views/connect.pug
     include assets/views/entry.pug
     include assets/views/change.pug
