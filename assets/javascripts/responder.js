@@ -9,7 +9,6 @@ let passwords = {};
 let secret = uuid();
 let password = null;
 let file = null;
-let oink = null;
 
 let SECRET_FILE = '$$$.json';
 
@@ -27,21 +26,6 @@ function toArrayBuffer(buf) {
     }
 
     return ab;
-
-}
-
-/**
- * Create Audio URL
- * 
- * @param {*} src the Audio Source
-
- */
-function createAudio(src) {
-    var content = window.api.fs().readFileSync(window.api.path($(`#${src}`)[0].src));
-    var buffer = toArrayBuffer(content);
-    var blob = new Blob([buffer], { type: 'audio/wav' });
-
-    return new Audio(URL.createObjectURL(blob))
 
 }
 
@@ -88,15 +72,15 @@ $.fn.Serialize = (passwords) => {
 
         async function convertImage(src) {
             return new Promise(async(accept, reject) => {
-                let fileUtil = new FileUtil(document);
+                let imageUtil = new ImageUtil(document);
 
                 if (src.startsWith('blob:') || src.startsWith('data:')) {
-                    let encodedImage = await fileUtil.encodeImageSource(src);
+                    let encodedImage = await imageUtil.encodeImageSource(src);
 
                     accept(encodedImage);
 
                 } else {
-                    let encodedImage = await fileUtil.encodeImageElement('info-image');
+                    let encodedImage = await imageUtil.encodeImageElement('info-image');
 
                     accept(encodedImage);
 
@@ -543,7 +527,7 @@ $('#connect-clean').on('click', (e) => {
 
 $('#info-button').on('click', (e) => {
 
-    oink.play();
+    $('#oink')[0].play();
 
 });
 
@@ -580,7 +564,6 @@ $(() => {
     document.addEventListener('drop', event => event.preventDefault());
     
     $('#unlock-password').hideShowPassword(false, true);
-    oink = createAudio('oink');
 
     $('#login-connect-close')[0].onclick = () => {
         $(this).Quit('#connect-dialog');
