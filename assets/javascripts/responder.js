@@ -7,6 +7,7 @@ document.addEventListener('drop', event => event.preventDefault());
 
 let passwords = {};
 let secret = uuid();
+
 let password = null;
 let file = null;
 
@@ -69,7 +70,7 @@ function uuid() {
 $.fn.Serialize = (passwords) => {
 
     return new Promise(async(accept, reject) => {
-
+ 
         async function convertImage(src) {
             return new Promise(async(accept, reject) => {
                 let imageUtil = new ImageUtil(document);
@@ -302,19 +303,15 @@ $('#unlock-safe').on('click', async(e) => {
             $('#connect-dialog').css('display', 'none');
         }
 
-        if ($('#unlock-password').val().length == 0 && $('#file-entry').val() != "") {
+        if ($('#file-entry').val().length == 0) {
+            throw "File Name field is empty !";
+        }
+
+        if ($('#unlock-password').val().length == 0) {
             throw "Password field is empty !";
         }
 
         password = $('#unlock-password').val();
-
-        if ($('#file-entry').val() == "") {
-            $('#mainbox').html("");
-            $('#connect-dialog').css('display', 'none');
-            $('#waiting').css('display', 'none');
-
-            return;
-        }
 
         let content = await processFile($('#file-entry').val());
 
@@ -371,6 +368,14 @@ $('#unlock-safe').on('click', async(e) => {
         }, 10000);
 
     }
+
+});
+
+$('#connect-new-file').on('click', async(e) => {
+
+    $('#mainbox').html("");
+    $('#connect-dialog').css('display', 'none');
+    $('#waiting').css('display', 'none');
 
 });
 
@@ -510,6 +515,24 @@ $('#change-password').on('click', (e) => {
 
 });
 
+$('#clear-entries').on('click', (e) => {
+    
+    $('#mainbox').html("");
+    passwords = {};
+
+});
+
+$('#clear').on('click', (e) => {
+    
+    $('#mainbox').html("");
+    passwords = {};
+
+    document.getElementById("dropdown").classList.remove('view');
+
+    return false;
+    
+});
+
 $('#trash-entry').on('click', (e) => {
 
     document.getElementById(`card-${$('#entry-uuid').val()}`).remove();
@@ -522,6 +545,7 @@ $('#trash-entry').on('click', (e) => {
 $('#connect-clean').on('click', (e) => {
 
     $('#file-entry').val('');
+    $('#unlock-password').val('');
 
 });
 

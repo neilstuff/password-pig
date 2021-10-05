@@ -14,10 +14,11 @@ block content
       div.layout
         h1(style="height: 30px; padding-left:40px; vertical-align:center"). 
           Password Pig
-        div(style="position: absolute; top:0px; right:80px; padding-left:10px;")
+        div(style="position: absolute; top:0px; right:50px; padding-left:10px;")
           button.button#upload-file(class="fas fa-folder-open fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:20px;")
           button.button#download-file(class="far fa-save fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:20px;")
           button.button#add-entry(class="far fa-address-card fa-1x top-icon" style="-webkit-app-region: no-drag; font-size:20px;")
+          button.button#clear-entries(class="fas fa-broom fa-1x top-icon" style="-webkit-app-region: no-drag; margin-left:10px;")
           button.button#menu(class="fas fa-bars fa-1x top-icon" style="-webkit-app-region: no-drag; margin-left:10px;")
         div(style="position: absolute; top:-5px; right:-15px; padding-left:10px;")
           button.button#window-minimize(class="fas fa-minus fa-1x top-icon" style="-webkit-app-region: no-drag; margin-left:12px; font-size:12px; width:18px; height:18px;")
@@ -27,6 +28,7 @@ block content
         a#load(href="") Load Safe
         a#save(href="") Save Safe
         a#change(href="") Change Password
+        a#clear(href="") Clear Entries
 
     div.container(style="position: absolute; top:36px; bottom:0px; left: 0px; right: 0px;")
       div.main(style="position: relative; overflow: auto; height:100%; left: 0px; right: 0px;")
