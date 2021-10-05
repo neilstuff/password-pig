@@ -299,10 +299,6 @@ $('#unlock-safe').on('click', async(e) => {
             $('#connect-dialog').css('display', 'none');
         }
 
-        $('#cancel-safe')[0].onclick = () => {
-            $('#connect-dialog').css('display', 'none');
-        }
-
         if ($('#file-entry').val().length == 0) {
             throw "File Name field is empty !";
         }
@@ -388,8 +384,23 @@ $('#menu').on('click', (e) => {
 $('#upload-file').on('click', (e) => {
     $('#connection-message').text("");
     $("#connect-dialog").css('display', 'inline-block');
+    $('#unlock-password').hideShowPassword(false, true);
+});
+
+$('#load').on('click', (e) => {
+    $('#connection-message').text("");
+    $("#connect-dialog").css('display', 'inline-block');
+    $('#unlock-password').hideShowPassword(false, true);
+
+    document.getElementById("dropdown").classList.remove('view');
+
+    return false;
 
 });
+
+$('#cancel-safe')[0].onclick = () => {
+    $('#connect-dialog').css('display', 'none');
+}
 
 $('#download-file').on('click', (e) => {
     $(this).Download();
@@ -397,6 +408,10 @@ $('#download-file').on('click', (e) => {
 
 $('#save').on('click', (e) => {
     $(this).Download();
+
+    document.getElementById("dropdown").classList.remove('view');
+
+    return false;
 });
 
 $("#select-file").on('click', async(e) => {
@@ -428,7 +443,6 @@ $("#save-safe").on('click', async(e) => {
 
     $(this).Close('#save-dialog');
     $('#waiting').css('display', 'none');
-
 
 });
 
@@ -530,7 +544,7 @@ $('#clear').on('click', (e) => {
     document.getElementById("dropdown").classList.remove('view');
 
     return false;
-    
+
 });
 
 $('#trash-entry').on('click', (e) => {
@@ -586,14 +600,8 @@ $(() => {
 
     document.addEventListener('dragover', event => event.preventDefault());
     document.addEventListener('drop', event => event.preventDefault());
-    
-    $('#unlock-password').hideShowPassword(false, true);
 
     $('#login-connect-close')[0].onclick = () => {
-        $(this).Quit('#connect-dialog');
-    }
-
-    $('#cancel-safe')[0].onclick = () => {
         $(this).Quit('#connect-dialog');
     }
 
@@ -611,6 +619,24 @@ $(() => {
     $('#password').hideShowPassword(false, true);
 
     var dropzone = $('#droparea');
+
+    dropzone.on('click', () => {
+        var loadButton = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
+    
+        loadButton.setAttribute("type", "file");
+     
+        loadButton.addEventListener('change', function() {
+            var files = $(this)[0].files;
+        
+            $('#password-image').attr('src',  URL.createObjectURL(files[0]));
+        
+            return false;
+        
+        }, false);
+    
+        loadButton.click();
+
+    });
 
     dropzone.on('dragover', () => {
         dropzone.addClass('hover');
