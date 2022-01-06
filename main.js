@@ -26,6 +26,8 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1300 + extend,
         height: 800,
+        minWidth: 1300 + extend,
+        minHeight: 800,
         resizable: true,
         frame: false,
         autoHideMenuBar: true,
@@ -62,7 +64,7 @@ app.on('ready', function() {
     protocol.registerBufferProtocol('pug', function(request, callback) {
         let parsedUrl = new URL(request.url);
         let pathname = path.normalize(path.toNamespacedPath(parsedUrl.pathname).startsWith("\\\\?\\") ?
-                            parsedUrl.pathname.replace(/^\/*/, '') :  parsedUrl.pathname);
+            parsedUrl.pathname.replace(/^\/*/, '') : parsedUrl.pathname);
         let ext = path.extname(pathname);
 
         switch (ext) {
@@ -167,12 +169,12 @@ ipcMain.on('printToPdf', function(event, arg) {
 
 ipcMain.on('showOpenDialog', async function(event) {
     var result = await dialog.showOpenDialog({
-            properties: [ 'openFile', 'createDirectory'],
+            properties: ['openFile', 'createDirectory'],
             filters: [
                 { name: 'pig', extensions: ['pig'] },
                 { name: 'All Files', extensions: ['*'] }
             ]
-        }  
+        }
 
     );
 
@@ -211,24 +213,24 @@ ipcMain.on('getCookie', async function(event, name) {
     function getCookie(name) {
 
         return new Promise(accept => {
-            
+
             session.defaultSession.cookies.get({
-                url: 'http://pig',
-                name: name
-            })
-            .then((cookies) => {
-               accept(cookies);
-            }).catch((error) => {
-                console.log(error);
-                accept(null);
-            });
+                    url: 'http://pig',
+                    name: name
+                })
+                .then((cookies) => {
+                    accept(cookies);
+                }).catch((error) => {
+                    console.log(error);
+                    accept(null);
+                });
 
         });
 
     }
 
     event.returnValue = await getCookie(name);
-    
+
 });
 
 
@@ -243,13 +245,13 @@ ipcMain.on('setCookie', async function(event, name, value) {
                 url: 'http://pig',
                 name: name,
                 value: value,
-                expirationDate: maxDate.getTime()         
-            })  .then(() => {
+                expirationDate: maxDate.getTime()
+            }).then(() => {
                 accept("OK");
-              }, (error) => {
+            }, (error) => {
                 console.error(error);
                 accept(error);
-              });     
+            });
 
         });
 

@@ -36,7 +36,7 @@ function toArrayBuffer(buf) {
  * @param {string} value the Cookie value
  */
 function setCookie(name, value) {
-    
+
     window.api.setCookie(name, value);
 
 }
@@ -57,12 +57,12 @@ function getCookie(name, callback) {
  * @returns a v4 uuid
  */
 function uuid() {
-    return  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var dt = new Date().getTime();
-        var r = (dt + Math.random()*16)%16 | 0;
-        dt = Math.floor(dt/16);
+        var r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
 
-        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
     });
 
 }
@@ -70,7 +70,7 @@ function uuid() {
 $.fn.Serialize = (passwords) => {
 
     return new Promise(async(accept, reject) => {
- 
+
         async function convertImage(src) {
             return new Promise(async(accept, reject) => {
                 let imageUtil = new ImageUtil(document);
@@ -121,7 +121,7 @@ $.fn.Serialize = (passwords) => {
 $.fn.Save = async(password, secret, passwords, filename) => {
 
     return new Promise(async(accept) => {
-  
+
         var entries = await $(this).Serialize(passwords);
 
         const bf = new Blowfish(password, Blowfish.MODE.ECB, Blowfish.PADDING.NULL);
@@ -136,20 +136,20 @@ $.fn.Save = async(password, secret, passwords, filename) => {
             zip.file(`${entry}.json`, JSON.stringify(entries[entry]));
         }
 
-        zip.generateAsync({type:"blob"}).then(async function (blob) { 
+        zip.generateAsync({ type: "blob" }).then(async function(blob) {
             var reader = new FileReader();
 
             reader.onloadend = function() {
                 window.api.fs().writeFile(filename, new Uint8Array(reader.result), () => {
-                    setCookie('filename', filename);    
+                    setCookie('filename', filename);
                     accept("OK");
                 });
             }
-      
+
             reader.readAsArrayBuffer(blob);
 
-        });   
-    
+        });
+
     });
 
 }
@@ -317,7 +317,7 @@ $('#unlock-safe').on('click', async(e) => {
         secret = bf.decode(b64Decoded, Blowfish.TYPE.STRING);
 
         if (!(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(secret))) {
-           throw "Invalid Password";
+            throw "Invalid Password";
         }
 
         let names = [];
@@ -344,11 +344,11 @@ $('#unlock-safe').on('click', async(e) => {
                 name: passwords[key].name,
                 image: passwords[key].image
             });
-            
+
             html = card + html;
 
         }
-     
+
         setCookie('filename', $('#file-entry').val());
 
         $('#mainbox').html(html);
@@ -433,7 +433,7 @@ $("#save-select-file").on('click', async(e) => {
 });
 
 $("#save-safe").on('click', async(e) => {
-    
+
     $('#waiting').css('display', 'flex');
 
     var password = $('#save-password').val();
@@ -530,14 +530,14 @@ $('#change-password').on('click', (e) => {
 });
 
 $('#clear-entries').on('click', (e) => {
-    
+
     $('#mainbox').html("");
     passwords = {};
 
 });
 
 $('#clear').on('click', (e) => {
-    
+
     $('#mainbox').html("");
     passwords = {};
 
@@ -550,6 +550,10 @@ $('#clear').on('click', (e) => {
 $('#trash-entry').on('click', (e) => {
 
     document.getElementById(`card-${$('#entry-uuid').val()}`).remove();
+
+    console.log(passwords);
+
+    delete passwords[$('#entry-uuid').val()];
 
     $('#entry-dialog').css('display', 'none');
 
@@ -622,18 +626,18 @@ $(() => {
 
     dropzone.on('click', () => {
         var loadButton = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
-    
+
         loadButton.setAttribute("type", "file");
-     
+
         loadButton.addEventListener('change', function() {
             var files = $(this)[0].files;
-        
-            $('#password-image').attr('src',  URL.createObjectURL(files[0]));
-        
+
+            $('#password-image').attr('src', URL.createObjectURL(files[0]));
+
             return false;
-        
+
         }, false);
-    
+
         loadButton.click();
 
     });
